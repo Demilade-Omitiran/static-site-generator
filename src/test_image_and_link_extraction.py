@@ -17,16 +17,14 @@ class TestSplitNodesDelimiter(unittest.TestCase):
     text = "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)"
     self.assertEqual(
       extract_markdown_links(text),
-      [("image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"), ("another", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png")]
+      [("link", "https://www.example.com"), ("another", "https://www.example.com/another")]
     )
 
   def test_invalid_image_markdown(self):
-    with self.assertRaises(Exception) as err:
-      extract_markdown_images("abc")
+    self.assertEqual(extract_markdown_images("[image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and [image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png)"), [])
 
   def test_invalid_link_markdown(self):
-    with self.assertRaises(Exception) as err:
-      extract_markdown_links("abc")
+    self.assertEqual(extract_markdown_links("abc"), [])
     
 
 if __name__ == "__main__":
