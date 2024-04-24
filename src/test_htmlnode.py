@@ -20,6 +20,16 @@ class TestHtmlNode(unittest.TestCase):
     node_html_props = node.props_to_html()
     self.assertEqual(node_html_props, " href=\"www.abc.com\" height=10")
 
+  def test_no_props_to_html(self):
+    node = HtmlNode("a", "link", None, None)
+    node_html_props = node.props_to_html()
+    self.assertEqual(node_html_props, "")
+
+  def test_empty_props_to_html(self):
+    node = HtmlNode("a", "link", None, {})
+    node_html_props = node.props_to_html()
+    self.assertEqual(node_html_props, "")
+
   def test_repr(self):
     node = HtmlNode("a", "link", None, { "href": "www.abc.com" })
     node2 = HtmlNode("div", "Here", [node], { "colour": "AABBCC" })
