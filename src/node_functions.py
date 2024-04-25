@@ -115,3 +115,42 @@ def markdown_to_blocks(markdown):
     blocks[i] = "\n".join(map(lambda x:x.strip(), blocks[i].split("\n")))
 
   return blocks
+
+def block_to_block_type(block):
+  if re.match(r"(^\#{1,6} )\w+", block):
+    return "heading"
+  if block.startswith("```") and block.endswith("```"):
+    return "code"
+  if block.startswith(">"):
+    every_line_is_valid = check_if_every_block_line_starts_with_char(block, ">")
+    if every_line_is_valid == True:
+      return "quote"
+  if block.startswith("* ") or block.startswith("- "):
+    every_line_is_valid = (
+      check_if_every_block_line_starts_with_char(block, "* ")
+      or check_if_every_block_line_starts_with_char(block, "- ")
+    )
+    if every_line_is_valid == True:
+      return "unordered_list"
+  if block.startswith("1. "):
+    every_line_is_valid = check_if_block_is_an_ordered_list(block)
+    if every_line_is_valid == True:
+      return "ordered_list"
+  return "paragraph"
+    
+def check_if_every_block_line_starts_with_char(block, char):
+  block_lines = block.split("\n")
+  every_line_is_valid = True
+  for i in range(0, len(block_lines)):
+    if not block_lines[i].startswith(char):
+      every_line_is_valid = False
+      break
+  return every_line_is_valid
+
+def check_if_block_is_an_ordered_list(block):
+  block_lines = block.split("\n")
+  every_line_is_valid = True
+  for i in range(0, len(block_lines)):
+    if not block_lines[i].startswith(f"{str(i + 1)}. "):
+      every_line_is_valid = False
+  return every_line_is_valid
