@@ -1,7 +1,6 @@
 import unittest
 
 from textnode import TextNode
-from leafnode import LeafNode
 from node_functions import text_to_textnodes
 
 class TestTextToTextNodes(unittest.TestCase):
