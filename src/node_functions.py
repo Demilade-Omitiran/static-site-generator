@@ -63,8 +63,10 @@ def split_nodes_image(old_nodes):
         new_nodes.append(TextNode(image[0], "image", image[1]))
       else:
         new_nodes.append(TextNode(image[0], "image", image[1]))
-      current_index = image_index + len(f"![{image[0]}]({image[1]})")
-
+      current_index += image_index + len(f"![{image[0]}]({image[1]})")
+    if current_index != (len(node_text) - 1) and node_text[current_index:].strip() != "":
+      new_nodes.append(TextNode(node_text[current_index:], "text"))
+  
   return new_nodes
 
 def split_nodes_link(old_nodes):
@@ -87,7 +89,20 @@ def split_nodes_link(old_nodes):
         new_nodes.append(TextNode(link[0], "link", link[1]))
       else:
         new_nodes.append(TextNode(link[0], "link", link[1]))
-      current_index = link_index + len(f"[{link[0]}]({link[1]})")
-
+      current_index += link_index + len(f"[{link[0]}]({link[1]})")
+    if current_index != (len(node_text) - 1) and node_text[current_index:].strip() != "":
+        new_nodes.append(TextNode(node_text[current_index:], "text"))
+  
   return new_nodes
-      
+  
+def text_to_textnodes(text):
+  nodes = split_nodes_delimiter(
+    [TextNode(text, "text")],
+    "**",
+    "bold"
+  )
+  nodes = split_nodes_delimiter(nodes, "*", "italic")
+  nodes = split_nodes_delimiter(nodes, "`", "code")
+  nodes = split_nodes_image(nodes)
+  nodes = split_nodes_link(nodes)
+  return nodes
