@@ -42,3 +42,52 @@ def extract_markdown_images(text):
 def extract_markdown_links(text):
   matches = re.findall(r"\[(.*?)\]\((.*?)\)", text)
   return matches
+
+def split_nodes_image(old_nodes):
+  new_nodes = []
+
+  for node in old_nodes:
+    if node.text_type != "text":
+      new_nodes.append(node)
+      continue
+    images_in_node = extract_markdown_images(node.text)
+    if len(images_in_node) == 0:
+      new_nodes.append(node)
+      continue
+    node_text = node.text
+    current_index = 0
+    for image in images_in_node:
+      image_index = node_text[current_index:].find(f"![{image[0]}]({image[1]})")
+      if image_index != 0:
+        new_nodes.append(TextNode(node_text[current_index:current_index + image_index], "text"))
+        new_nodes.append(TextNode(image[0], "image", image[1]))
+      else:
+        new_nodes.append(TextNode(image[0], "image", image[1]))
+      current_index = image_index + len(f"![{image[0]}]({image[1]})")
+
+  return new_nodes
+
+def split_nodes_link(old_nodes):
+  new_nodes = []
+
+  for node in old_nodes:
+    if node.text_type != "text":
+      new_nodes.append(node)
+      continue
+    links_in_node = extract_markdown_links(node.text)
+    if len(links_in_node) == 0:
+      new_nodes.append(node)
+      continue
+    node_text = node.text
+    current_index = 0
+    for link in links_in_node:
+      link_index = node_text[current_index:].find(f"[{link[0]}]({link[1]})")
+      if link_index != 0:
+        new_nodes.append(TextNode(node_text[current_index:current_index + link_index], "text"))
+        new_nodes.append(TextNode(link[0], "link", link[1]))
+      else:
+        new_nodes.append(TextNode(link[0], "link", link[1]))
+      current_index = link_index + len(f"[{link[0]}]({link[1]})")
+
+  return new_nodes
+      
