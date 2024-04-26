@@ -9,7 +9,7 @@ def text_node_to_html_node(text_node):
     "italic": lambda node: LeafNode("i", node.text),
     "code": lambda node: LeafNode("code", node.text),
     "link": lambda node: LeafNode("a", node.text, { "href": node.url }),
-    "image": lambda node: LeafNode("img", None, { "src": node.url, "alt": node.text })
+    "image": lambda node: LeafNode("img", "", { "src": node.url, "alt": node.text })
   }
   if text_node.text_type not in converter_function_dict:
     raise Exception("Invalid text_type") 
@@ -121,8 +121,8 @@ def block_to_block_type(block):
     return "heading"
   if block.startswith("```") and block.endswith("```"):
     return "code"
-  if block.startswith(">"):
-    every_line_is_valid = check_if_every_block_line_starts_with_char(block, ">")
+  if block.startswith("> "):
+    every_line_is_valid = check_if_every_block_line_starts_with_char(block, "> ")
     if every_line_is_valid == True:
       return "quote"
   if block.startswith("* ") or block.startswith("- "):
