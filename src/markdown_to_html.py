@@ -1,4 +1,5 @@
 import re
+import os
 from leafnode import LeafNode
 from parentnode import ParentNode
 from node_functions import (
@@ -111,3 +112,26 @@ def generate_page(from_path, template_path, dest_path):
   writer.write(template)
   writer.close()
   
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+  dir_contents = os.listdir(dir_path_content)
+
+  for content in dir_contents:
+    path_to_content = os.path.join(dir_path_content, content)
+    if os.path.isfile(path_to_content):
+      if os.path.isfile(dest_dir_path):
+        new_dest_dir_path = dest_dir_path
+      else:
+        new_dest_dir_path = os.path.join(dest_dir_path, "index.html")
+      generate_page(
+        path_to_content,
+        template_path,
+        new_dest_dir_path
+      )
+    else:
+      new_dest_dir_path = os.path.join(dest_dir_path, content)
+      os.mkdir(new_dest_dir_path)
+      generate_pages_recursive(
+        path_to_content,
+        template_path,
+        new_dest_dir_path
+      )
