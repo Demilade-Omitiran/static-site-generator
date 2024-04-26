@@ -30,8 +30,8 @@ class TestBlockToBlockType(unittest.TestCase):
       )
 
     def test_quotes(self):
-      block1 = ">This is a quote"
-      block2 = ">This is another quote\n>Here is yet another quote\n>And another"
+      block1 = "> This is a quote"
+      block2 = "> This is another quote\n> Here is yet another quote\n> And another"
       self.assertEqual(
         block_to_block_type(block1),
         "quote"
@@ -112,7 +112,7 @@ class TestBlockToBlockType(unittest.TestCase):
       )
 
     def test_invalid_quotes(self):
-      block = ">This is a valid quote\n>Here is yet another quote\n*But this is invalid"
+      block = "> This is a valid quote\n> Here is yet another quote\n>But this is invalid"
       self.assertEqual(
         block_to_block_type(block),
         "paragraph"

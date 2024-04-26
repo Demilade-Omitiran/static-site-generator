@@ -55,7 +55,7 @@ class TestTextNodeToHtmlConverter(unittest.TestCase):
     leaf_node = text_node_to_html_node(node)
     self.assertEqual(type(leaf_node), LeafNode)
     self.assertEqual(leaf_node.tag, 'img')
-    self.assertEqual(leaf_node.value, None)
+    self.assertEqual(leaf_node.value, "")
     self.assertEqual(leaf_node.children, None)
     self.assertEqual(leaf_node.props, { "src": "www.abc.com", "alt": "This is a text node" })
 
