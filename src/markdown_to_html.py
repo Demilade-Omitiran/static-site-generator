@@ -95,3 +95,18 @@ def extract_title(markdown):
   if match == None:
     raise Exception("document must have a heading")
   return match.string.split("\n")[0]
+
+def generate_page(from_path, template_path, dest_path):
+  print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+  with open(from_path, "r") as file:
+    markdown = file.read()
+  with open(template_path, "r") as file:
+    template = file.read()
+  markdown_html = markdown_to_html(markdown)
+  title = extract_title(markdown)
+  template = template.replace("{{ Title }}", title)
+  template = template.replace("{{ Content }}", str(markdown_html))
+  writer = open(dest_path, "w")
+  writer.write(template)
+  writer.close()
+  
