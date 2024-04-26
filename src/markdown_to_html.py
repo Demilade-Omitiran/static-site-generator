@@ -25,16 +25,17 @@ def markdown_to_html(markdown):
     block_type_function = block_type_function_dict[block_type]
     top_level_html_node_children.append(block_type_function(block))
 
-  return ParentNode("div", top_level_html_node_children)
+  top_level_html_node = ParentNode("div", top_level_html_node_children)
+  return top_level_html_node.to_html()
 
 def create_blockquote_html(block):
   block_lines = block.split("\n")
   inline_nodes = []
 
   for line in block_lines:
-    text_nodes = text_to_textnodes(line[1:])
-    html_nodes = map(lambda node: text_node_to_html_node(node), text_nodes)
-    inline_nodes.append(html_nodes)
+    text_nodes = text_to_textnodes(line[2:])
+    html_nodes = list(map(lambda node: text_node_to_html_node(node), text_nodes))
+    inline_nodes += html_nodes
 
   return ParentNode("blockquote", inline_nodes)
 
@@ -44,7 +45,7 @@ def create_paragraph_html(block):
 def create_heading_html(block):
   block_without_the_heading = " ".join((block.split(" "))[1:])
   number_of_h_tag = (block.split(" ")[0]).count("#")
-  return ParentNode(f"h{number_of_h_tag}", create_block_inline_nodes(block_without_the_heading))
+  return LeafNode(f"h{number_of_h_tag}", block_without_the_heading)
 
 def create_unordered_list_html(block):
   block_lines = block.split("\n")
@@ -52,7 +53,7 @@ def create_unordered_list_html(block):
 
   for line in block_lines:
     text_nodes = text_to_textnodes(line[2:])
-    html_nodes = map(lambda node: text_node_to_html_node(node), text_nodes)
+    html_nodes = list(map(lambda node: text_node_to_html_node(node), text_nodes))
     inline_nodes.append(
       ParentNode("li", html_nodes)
     )
@@ -65,7 +66,7 @@ def create_ordered_list_html(block):
 
   for line in block_lines:
     text_nodes = text_to_textnodes(line[3:])
-    html_nodes = map(lambda node: text_node_to_html_node(node), text_nodes)
+    html_nodes = list(map(lambda node: text_node_to_html_node(node), text_nodes))
     inline_nodes.append(
       ParentNode("li", html_nodes)
     )
@@ -85,8 +86,8 @@ def create_block_inline_nodes(block):
 
   for line in block_lines:
     text_nodes = text_to_textnodes(line)
-    html_nodes = map(lambda node: text_node_to_html_node(node), text_nodes)
-    inline_nodes.append(html_nodes)
+    html_nodes = list(map(lambda node: text_node_to_html_node(node), text_nodes))
+    inline_nodes += html_nodes
 
   return inline_nodes
 
@@ -105,7 +106,7 @@ def generate_page(from_path, template_path, dest_path):
   markdown_html = markdown_to_html(markdown)
   title = extract_title(markdown)
   template = template.replace("{{ Title }}", title)
-  template = template.replace("{{ Content }}", str(markdown_html))
+  template = template.replace("{{ Content }}", markdown_html)
   writer = open(dest_path, "w")
   writer.write(template)
   writer.close()
