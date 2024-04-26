@@ -1,4 +1,4 @@
-from textnode import TextNode
+import re
 from leafnode import LeafNode
 from parentnode import ParentNode
 from node_functions import (
@@ -26,7 +26,6 @@ def markdown_to_html(markdown):
     top_level_html_node_children.append(block_type_function(block))
 
   return ParentNode("div", top_level_html_node_children)
-
 
 def create_blockquote_html(block):
   block_lines = block.split("\n")
@@ -80,7 +79,6 @@ def create_code_html(block):
     LeafNode("code", block_text)
   ])
 
-
 def create_block_inline_nodes(block):
   block_lines = block.split("\n")
   inline_nodes = []
@@ -91,3 +89,9 @@ def create_block_inline_nodes(block):
     inline_nodes.append(html_nodes)
 
   return inline_nodes
+
+def extract_title(markdown):
+  match = re.match(r"^\# ", markdown)
+  if match == None:
+    raise Exception("document must have a heading")
+  return match.string.split("\n")[0]
